@@ -1,0 +1,29 @@
+SymfonyContrib\Bundle\ContentSchedulerBundle\Entity\Schedule:
+    type: entity
+    repositoryClass: SymfonyContrib\Bundle\ContentSchedulerBundle\Entity\Repository\ScheduleRepository
+    table: content_schedule
+    id:
+        id:
+            type: integer
+            generator:
+                strategy: auto
+    uniqueConstraints:
+        content_schedule_content_action:
+            columns:
+                - content_action
+    indexes:
+        content_schedule_action_time:
+            columns:
+                - action_time
+    fields:
+        action:
+            column: content_action
+            type: string
+            length: 255
+            options:
+                comment: Format: Bundle:Entity:EnityId:MethodName
+        when:
+            column: action_time
+            type: datetime
+            options:
+                comment: Date and Time when action should be performed.

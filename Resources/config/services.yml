@@ -1,0 +1,19 @@
+parameters:
+    content_scheduler.form.type.publishing.class: SymfonyContrib\Bundle\ContentSchedulerBundle\Form\Type\ScheduledPublishingType
+    content_scheduler.publishing.scheduler.class: SymfonyContrib\Bundle\ContentSchedulerBundle\ScheduledPublishing\PublishingScheduler
+    content_scheduler.doctrine.event_subscriber.class: SymfonyContrib\Bundle\ContentSchedulerBundle\Doctrine\EventSubscriber
+
+services:
+    content_scheduler.form.type.publishing:
+        class: %content_scheduler.form.type.publishing.class%
+        tags:
+            - name: form.type
+              alias: scheduled_publishing
+    content_scheduler.publishing.scheduler:
+        class: %content_scheduler.publishing.scheduler.class%
+        arguments:
+            - @doctrine.orm.entity_manager
+    content_scheduler.doctrine.event_subscriber:
+        class: %content_scheduler.doctrine.event_subscriber.class%
+        tags:
+            - name: doctrine.event_subscriber
