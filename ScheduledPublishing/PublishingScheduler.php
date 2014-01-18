@@ -6,6 +6,7 @@
 namespace SymfonyContrib\Bundle\ContentSchedulerBundle\ScheduledPublishing;
 
 use Symfony\Component\Form\Form;
+use Symfony\Component\Form\FormError;
 use Symfony\Component\HttpFoundation\Request;
 use SymfonyContrib\Bundle\ContentSchedulerBundle\Entity\Schedule;
 use Doctrine\ORM\EntityManager;
@@ -88,40 +89,56 @@ class PublishingScheduler
     public function formSetData(Form $form, array $data)
     {
         // Datetime does not inherit properly so they are being done individually.
-        if (isset($data['schedulePublish']) &&
-            !empty($data['publishWhen']['date']) &&
-            !empty($data['publishWhen']['time']))
-        {
-            $form->get('schedulePublish')->setData(true);
-            $data['publishWhen'] = new \DateTime(implode(' ', $data['publishWhen']));
-            $publishWhen = $form->get('publishWhen');
-            $publishWhen->get('date')->setData([
-                'year' => $data['publishWhen']->format('Y'),
-                'month' => $data['publishWhen']->format('m'),
-                'day' => $data['publishWhen']->format('d'),
-            ]);
-            $publishWhen->get('time')->setData([
-                'hour' => $data['publishWhen']->format('H'),
-                'minute' => $data['publishWhen']->format('i'),
-            ]);
+        if (isset($data['schedulePublish'])) {
+            if (!empty($data['publishWhen']['date']) &&
+                !empty($data['publishWhen']['time'])
+            ) {
+                $form->get('schedulePublish')->setData(true);
+                $data['publishWhen'] = new \DateTime(implode(' ', $data['publishWhen']));
+                $publishWhen = $form->get('publishWhen');
+                $publishWhen->get('date')->setData([
+                    'year' => $data['publishWhen']->format('Y'),
+                    'month' => $data['publishWhen']->format('m'),
+                    'day' => $data['publishWhen']->format('d'),
+                ]);
+                $publishWhen->get('time')->setData([
+                    'hour' => $data['publishWhen']->format('H'),
+                    'minute' => $data['publishWhen']->format('i'),
+                ]);
+            } else {
+                if (empty($data['publishWhen']['date']) ||
+                    empty($data['publishWhen']['time'])
+                ) {
+                    $form->get('publishWhen')->get('date')
+                        ->addError(new FormError('Publish date and time are required for scheduling.'));
+                }
+            }
         }
 
-        if (isset($data['scheduleUnpublish']) &&
-            !empty($data['unpublishWhen']['date']) &&
-            !empty($data['unpublishWhen']['time']))
-        {
-            $form->get('scheduleUnpublish')->setData(true);
-            $data['unpublishWhen'] = new \DateTime(implode(' ', $data['unpublishWhen']));
-            $unpublishWhen = $form->get('unpublishWhen');
-            $unpublishWhen->get('date')->setData([
-                'year' => $data['unpublishWhen']->format('Y'),
-                'month' => $data['unpublishWhen']->format('m'),
-                'day' => $data['unpublishWhen']->format('d'),
-            ]);
-            $unpublishWhen->get('time')->setData([
-                'hour' => $data['unpublishWhen']->format('H'),
-                'minute' => $data['unpublishWhen']->format('i'),
-            ]);
+        if (isset($data['scheduleUnpublish'])) {
+            if (!empty($data['unpublishWhen']['date']) &&
+                !empty($data['unpublishWhen']['time'])
+            ) {
+                $form->get('scheduleUnpublish')->setData(true);
+                $data['unpublishWhen'] = new \DateTime(implode(' ', $data['unpublishWhen']));
+                $unpublishWhen = $form->get('unpublishWhen');
+                $unpublishWhen->get('date')->setData([
+                    'year' => $data['unpublishWhen']->format('Y'),
+                    'month' => $data['unpublishWhen']->format('m'),
+                    'day' => $data['unpublishWhen']->format('d'),
+                ]);
+                $unpublishWhen->get('time')->setData([
+                    'hour' => $data['unpublishWhen']->format('H'),
+                    'minute' => $data['unpublishWhen']->format('i'),
+                ]);
+            } else {
+                if (empty($data['unpublishWhen']['date']) ||
+                    empty($data['unpublishWhen']['time'])
+                ) {
+                    $form->get('unpublishWhen')
+                        ->addError(new FormError('Unpublish date and time are required for scheduling.'));
+                }
+            }
         }
     }
 
@@ -139,7 +156,7 @@ class PublishingScheduler
 
                 if (!$date || !$time) {
                     // Date and time are required.
-                    throw new \Exception();
+                    //throw new \Exception();
                 }
 
                 // Create schedule for publishing.

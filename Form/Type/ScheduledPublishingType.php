@@ -17,6 +17,7 @@ class ScheduledPublishingType extends AbstractType
             ->add('schedulePublish', 'checkbox', [
                 'mapped' => false,
                 'required' => false,
+                'error_bubbling' => true,
                 'label' => 'Schedule publishing at:',
                 'attr' => [
                     'data-toggle' => 'collapse',
@@ -26,6 +27,7 @@ class ScheduledPublishingType extends AbstractType
             ->add('publishWhen', 'datetime', [
                 'mapped' => false,
                 'required' => false,
+                'error_bubbling' => true,
                 'label' => false,
                 'date_widget' => 'single_text',
                 'time_widget' => 'single_text',
@@ -33,6 +35,7 @@ class ScheduledPublishingType extends AbstractType
             ->add('scheduleUnpublish', 'checkbox', [
                 'mapped' => false,
                 'required' => false,
+                'error_bubbling' => true,
                 'label' => 'Schedule unpublishing at:',
                 'attr' => [
                     'data-toggle' => 'collapse',
@@ -42,6 +45,7 @@ class ScheduledPublishingType extends AbstractType
             ->add('unpublishWhen', 'datetime', [
                 'mapped' => false,
                 'required' => false,
+                'error_bubbling' => true,
                 'label' => false,
                 'date_widget' => 'single_text',
                 'time_widget' => 'single_text',
