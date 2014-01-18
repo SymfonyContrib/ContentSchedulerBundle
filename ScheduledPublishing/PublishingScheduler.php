@@ -91,7 +91,8 @@ class PublishingScheduler
         // Datetime does not inherit properly so they are being done individually.
         if (isset($data['schedulePublish'])) {
             if (!empty($data['publishWhen']['date']) &&
-                !empty($data['publishWhen']['time'])
+                !empty($data['publishWhen']['time']) &&
+                !$form->isSubmitted()
             ) {
                 $form->get('schedulePublish')->setData(true);
                 $data['publishWhen'] = new \DateTime(implode(' ', $data['publishWhen']));
@@ -117,7 +118,8 @@ class PublishingScheduler
 
         if (isset($data['scheduleUnpublish'])) {
             if (!empty($data['unpublishWhen']['date']) &&
-                !empty($data['unpublishWhen']['time'])
+                !empty($data['unpublishWhen']['time']) &&
+                !$form->isSubmitted()
             ) {
                 $form->get('scheduleUnpublish')->setData(true);
                 $data['unpublishWhen'] = new \DateTime(implode(' ', $data['unpublishWhen']));
