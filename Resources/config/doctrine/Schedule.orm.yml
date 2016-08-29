@@ -21,7 +21,7 @@ SymfonyContrib\Bundle\ContentSchedulerBundle\Entity\Schedule:
             type: string
             length: 255
             options:
-                comment: Format: Bundle:Entity:EnityId:MethodName
+                comment: 'Format: Bundle:Entity:EnityId:MethodName'
         when:
             column: action_time
             type: datetime

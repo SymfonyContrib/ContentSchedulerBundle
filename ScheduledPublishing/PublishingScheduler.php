@@ -1,7 +1,4 @@
 <?php
-/**
- *
- */
 
 namespace SymfonyContrib\Bundle\ContentSchedulerBundle\ScheduledPublishing;
 
@@ -24,18 +21,20 @@ class PublishingScheduler
         $this->em = $em;
     }
 
-    public function handleForm(Request $request, Form $form, $propertyPath, $entityClass, $entityId)
+    public function handleForm(Request $request, Form $form, $propertyPath, $entityClass, $entityId = null)
     {
         $schedulerData = null;
+        $formName      = $form->getName();
+        $accessor      = PropertyAccess::createPropertyAccessor();
 
         if ($request->isMethod('POST')) {
-            $schedulerData = $request->request->get($propertyPath, null, true) ? : [];
+            $formData      = $request->request->get($formName, null) ?: [];
+            $schedulerData = $accessor->getValue($formData, $propertyPath);
         } elseif ($entityId) {
             $schedulerData = $this->getDefaultFormData($entityClass, $entityId);
         }
         if (!empty($schedulerData)) {
-            $accessor = PropertyAccess::createPropertyAccessor();
-            $schedulerForm = $accessor->getValue($form->all(), substr($propertyPath, strpos($propertyPath, '[')));
+            $schedulerForm = $accessor->getValue($form->all(), $propertyPath);
             $this->formSetData($schedulerForm, $schedulerData);
         }
 

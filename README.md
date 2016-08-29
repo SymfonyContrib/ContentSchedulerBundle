@@ -28,7 +28,7 @@ To implement scheduled publishing you need to collect the scheduling data on
 your content form. A prepared type is provided that can be used or extended.
 
 ```php
-$builder->add('scheduler', 'scheduled_publishing', [
+$builder->add('scheduler', ScheduledPublishingType::class, [
     'mapped' => false,
 ]);
 ```

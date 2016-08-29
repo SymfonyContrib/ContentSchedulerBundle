@@ -13,18 +13,16 @@
         }
     ],
     "require": {
-        "php": ">=5.4",
-        "symfony/symfony": "~2.3"
+        "symfony/symfony": "~3.0"
     },
     "autoload": {
-        "psr-0": {
+        "psr-4": {
             "SymfonyContrib\\Bundle\\ContentSchedulerBundle\\": ""
         }
     },
-    "target-dir": "SymfonyContrib/Bundle/ContentSchedulerBundle",
     "extra": {
         "branch-alias": {
-            "dev-master": "1.0.x-dev"
+            "dev-master": "2.0.x-dev"
         }
     }
 }

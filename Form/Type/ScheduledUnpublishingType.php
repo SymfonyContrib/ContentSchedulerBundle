@@ -8,22 +8,22 @@ use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-class ScheduledPublishingType extends AbstractType
+class ScheduledUnpublishingType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('schedulePublish', CheckboxType::class, [
+            ->add('scheduleUnpublish', CheckboxType::class, [
                 'mapped' => false,
                 'required' => false,
                 'error_bubbling' => true,
-                'label' => 'Schedule publishing at:',
+                'label' => 'Schedule unpublishing at:',
                 'attr' => [
                     'data-toggle' => 'collapse',
-                    'data-target' => '#schedule-publish-date',
+                    'data-target' => '#schedule-unpublish-date',
                 ],
             ])
-            ->add('publishWhen', DateTimeType::class, [
+            ->add('unpublishWhen', DateTimeType::class, [
                 'mapped' => false,
                 'required' => false,
                 'error_bubbling' => true,
