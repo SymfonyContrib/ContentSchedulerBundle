@@ -14,22 +14,21 @@ class ScheduledUnpublishingType extends AbstractType
     {
         $builder
             ->add('scheduleUnpublish', CheckboxType::class, [
-                'mapped' => false,
-                'required' => false,
+                'mapped'         => false,
+                'required'       => false,
                 'error_bubbling' => true,
-                'label' => 'Schedule unpublishing at:',
-                'attr' => [
-                    'data-toggle' => 'collapse',
-                    'data-target' => '#schedule-unpublish-date',
+                'label'          => 'Schedule unpublishing',
+                'attr'           => [
+                    'class' => 'schedule-unpublish',
                 ],
             ])
             ->add('unpublishWhen', DateTimeType::class, [
-                'mapped' => false,
-                'required' => false,
+                'mapped'         => false,
+                'required'       => false,
                 'error_bubbling' => true,
-                'label' => false,
-                'date_widget' => 'single_text',
-                'time_widget' => 'single_text',
+                'label'          => false,
+                'date_widget'    => 'single_text',
+                'time_widget'    => 'single_text',
             ]);
     }
 

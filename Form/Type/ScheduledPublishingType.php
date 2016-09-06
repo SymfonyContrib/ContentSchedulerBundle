@@ -14,22 +14,21 @@ class ScheduledPublishingType extends AbstractType
     {
         $builder
             ->add('schedulePublish', CheckboxType::class, [
-                'mapped' => false,
-                'required' => false,
+                'mapped'         => false,
+                'required'       => false,
                 'error_bubbling' => true,
-                'label' => 'Schedule publishing at:',
-                'attr' => [
-                    'data-toggle' => 'collapse',
-                    'data-target' => '#schedule-publish-date',
+                'label'          => 'Schedule publishing',
+                'attr'           => [
+                    'class' => 'schedule-publish',
                 ],
             ])
             ->add('publishWhen', DateTimeType::class, [
-                'mapped' => false,
-                'required' => false,
+                'mapped'         => false,
+                'required'       => false,
                 'error_bubbling' => true,
-                'label' => false,
-                'date_widget' => 'single_text',
-                'time_widget' => 'single_text',
+                'label'          => false,
+                'date_widget'    => 'single_text',
+                'time_widget'    => 'single_text',
             ]);
     }
 
