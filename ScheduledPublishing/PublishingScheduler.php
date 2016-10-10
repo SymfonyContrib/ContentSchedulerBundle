@@ -4,11 +4,13 @@ namespace SymfonyContrib\Bundle\ContentSchedulerBundle\ScheduledPublishing;
 
 use Symfony\Component\Form\Form;
 use Symfony\Component\Form\FormError;
-use Symfony\Component\HttpFoundation\Request;
 use SymfonyContrib\Bundle\ContentSchedulerBundle\Entity\Schedule;
 use Doctrine\ORM\EntityManager;
-use Symfony\Component\PropertyAccess\PropertyAccess;
 
+/**
+ * Publishing scheduler.
+ * @todo: This needs to be refactored to allow other actions to extend an abstract.
+ */
 class PublishingScheduler
 {
     /**
@@ -16,73 +18,29 @@ class PublishingScheduler
      */
     public $em;
 
+    /**
+     * PublishingScheduler constructor.
+     *
+     * @param EntityManager $em
+     */
     public function __construct(EntityManager $em)
     {
         $this->em = $em;
     }
 
-    public function handleForm(Request $request, Form $form, $propertyPath, $entityClass, $entityId = null)
-    {
-        $schedulerData = null;
-        $formName      = $form->getName();
-        $accessor      = PropertyAccess::createPropertyAccessor();
-
-        if ($request->isMethod('POST')) {
-            $formData      = $request->request->get($formName, null) ?: [];
-            $schedulerData = $accessor->getValue($formData, $propertyPath);
-        } elseif ($entityId) {
-            $schedulerData = $this->getDefaultFormData($entityClass, $entityId);
-        }
-        if (!empty($schedulerData)) {
-            $schedulerForm = $accessor->getValue($form->all(), $propertyPath);
-            $this->formSetData($schedulerForm, $schedulerData);
-        }
-
-        return $schedulerData;
-    }
-
+    /**
+     * @param string $entityClass
+     * @param int    $entityId
+     * @param string $method
+     *
+     * @return null|Schedule
+     */
     public function getSchedule($entityClass, $entityId, $method)
     {
         $repo   = $this->em->getRepository('ContentSchedulerBundle:Schedule');
         $action = $entityClass . ':' . $entityId . ':' . $method;
 
-        return $repo->findOneBy(['action' => $action]);
-    }
-
-    public function getDefaultFormData($entityClass, $entityId)
-    {
-        $publishSchedule   = $this->getSchedule($entityClass, $entityId, 'publish');
-        $unpublishSchedule = $this->getSchedule($entityClass, $entityId, 'unpublish');
-
-        return $this->prepareFormData($publishSchedule, $unpublishSchedule);
-    }
-
-    public function prepareFormData(Schedule $publish = null, Schedule $unpublish = null)
-    {
-        $formData = [
-            'publishWhen' => [
-                'date' => '',
-                'time' => ''
-            ],
-            'unpublishWhen' => [
-                'date' => '',
-                'time' => ''
-            ],
-        ];
-
-        if ($publish) {
-            $formData['schedulePublish'] = 1;
-            $formData['publishWhen']['date'] = $publish->getWhen()->format('Y-m-d');
-            $formData['publishWhen']['time'] = $publish->getWhen()->format('H:i');
-        }
-
-        if ($unpublish) {
-            $formData['scheduleUnpublish'] = 1;
-            $formData['unpublishWhen']['date'] = $unpublish->getWhen()->format('Y-m-d');
-            $formData['unpublishWhen']['time'] = $unpublish->getWhen()->format('H:i');
-        }
-
-        return $formData;
+        return $repo->findOneBy(['action' => $action]) ?: new Schedule();
     }
 
     public function formSetData(Form $form, array $data)
@@ -143,41 +101,17 @@ class PublishingScheduler
         }
     }
 
-    public function formSubmit($formValues, $entityClass, $entityId)
-    {
-        $methods = [
-            'publish',
-            'unpublish',
-        ];
-
-        foreach ($methods as $method) {
-            if (isset($formValues['schedule' . ucfirst($method)])) {
-                $date = $formValues[$method . 'When']['date'];
-                $time = $formValues[$method . 'When']['time'];
-
-                if (!$date || !$time) {
-                    // Date and time are required.
-                    //throw new \Exception();
-                }
-
-                // Create schedule for publishing.
-                $this->createOrUpdateSchedule($entityClass, $entityId, $method, new \DateTime($date . ' ' . $time));
-            } else {
-                $this->deleteScheduleByAction($entityClass, $entityId, $method);
-            }
-        }
-    }
-
     public function createOrUpdateSchedule($entityClass, $entityId, $method, $when)
     {
-        $action = $entityClass . ':' . $entityId . ':' . $method;
+        $action   = $entityClass.':'.$entityId.':'.$method;
         $schedule = $this->em->getRepository('ContentSchedulerBundle:Schedule')
             ->findOneBy(['action' => $action]) ?: new Schedule();
-        $schedule->setAction($action);
-        $schedule->setWhen($when);
+        $schedule
+            ->setAction($action)
+            ->setWhen($when);
 
         $this->em->persist($schedule);
-        //$this->em->flush($schedule);
+        // Implementing application is responsible for flushing.
     }
 
     public function deleteScheduleByAction($entityClass, $entityId, $method)
@@ -191,6 +125,9 @@ class PublishingScheduler
             ->execute();
     }
 
+    /**
+     * Run only the actions that are due.
+     */
     public function runDueActions()
     {
         $repo = $this->em->getRepository('ContentSchedulerBundle:Schedule');
@@ -201,12 +138,17 @@ class PublishingScheduler
         }
     }
 
+    /**
+     * Execute a scheduled action.
+     *
+     * @param Schedule $schedule
+     */
     public function executeSchedule(Schedule $schedule)
     {
         // Split out action into relevant parts.
-        list($bundle, $class, $id, $method) = explode(':', $schedule->getAction());
+        list($class, $id, $method) = explode(':', $schedule->getAction());
         // Execute the action.
-        $this->em->find($bundle . ':' . $class, $id)->{$method}();
+        $this->em->find($class, $id)->{$method}();
         // Delete the schedule.
         $this->em->remove($schedule);
         $this->em->flush();

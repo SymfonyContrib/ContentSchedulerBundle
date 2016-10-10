@@ -1,36 +1,42 @@
 <?php
-/**
- *
- */
 
 namespace SymfonyContrib\Bundle\ContentSchedulerBundle\Entity;
 
+/**
+ * Content schedule entity.
+ */
 class Schedule
 {
-    /**
-     * @var int
-     */
+    const ACTION_PUBLISH   = 'publish';
+    const ACTION_UNPUBLISH = 'unpublish';
+
+    /** @var  int */
     protected $id;
 
-    /**
-     * @var string
-     */
+    /** @var  string */
     protected $action;
 
-    /**
-     * @var \DateTime
-     */
+    /** @var  \DateTime */
     protected $when;
 
-    public function _construct()
-    {}
+    /**
+     * @return int
+     */
+    public function getId()
+    {
+        return $this->id;
+    }
 
     /**
-     * @param string $action
+     * @param int $id
+     *
+     * @return Schedule
      */
-    public function setAction($action)
+    public function setId($id)
     {
-        $this->action = $action;
+        $this->id = $id;
+
+        return $this;
     }
 
     /**
@@ -42,27 +48,15 @@ class Schedule
     }
 
     /**
-     * @param int $id
+     * @param string $action
+     *
+     * @return Schedule
      */
-    public function setId($id)
+    public function setAction($action)
     {
-        $this->id = $id;
-    }
+        $this->action = $action;
 
-    /**
-     * @return int
-     */
-    public function getId()
-    {
-        return $this->id;
-    }
-
-    /**
-     * @param \DateTime $when
-     */
-    public function setWhen($when)
-    {
-        $this->when = $when;
+        return $this;
     }
 
     /**
@@ -73,4 +67,15 @@ class Schedule
         return $this->when;
     }
 
+    /**
+     * @param \DateTime $when
+     *
+     * @return Schedule
+     */
+    public function setWhen($when)
+    {
+        $this->when = $when;
+
+        return $this;
+    }
 }

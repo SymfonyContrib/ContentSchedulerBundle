@@ -28,26 +28,7 @@ To implement scheduled publishing you need to collect the scheduling data on
 your content form. A prepared type is provided that can be used or extended.
 
 ```php
-$builder->add('scheduler', ScheduledPublishingType::class, [
-    'mapped' => false,
-]);
-```
-
-In your form controller:
-
-```php
-...
-$scheduler = $this->get('content_scheduler.publishing.scheduler');
-$schedulerData = $scheduler->handleForm($request, $form, 'acme_demo_form[scheduler]', 'AcmeDemoBundle:DemoEntity', $id);
-
-$form->handleRequest($request);
-
-if ($form->isValid()) {
-    ...
-    $scheduler->formSubmit($schedulerData, 'AcmeDemoBundle:DemoEntity', $entity->getId());
-    $em->flush();
-    ...
-}
+$builder->add('scheduler', ScheduledPublishingType::class);
 ```
 
 That is all that is need to create and manage your publishing schedule.
