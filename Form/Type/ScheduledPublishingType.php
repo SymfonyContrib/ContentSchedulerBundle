@@ -94,7 +94,6 @@ class ScheduledPublishingType extends AbstractType
      */
     public function onPostSubmit(FormEvent $event)
     {
-        dump($event->getData());
         $schedule = $event->getData();
         $content  = $event->getForm()->getParent()->getData();
 
