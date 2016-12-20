@@ -7,6 +7,7 @@ use Symfony\Component\Form\CallbackTransformer;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\FormError;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -94,20 +95,22 @@ class ScheduledPublishingType extends AbstractType
      */
     public function onPostSubmit(FormEvent $event)
     {
+        /** @var Schedule $schedule */
         $schedule = $event->getData();
         $content  = $event->getForm()->getParent()->getData();
 
-        // @todo: Handle validation.
-        /*if (empty($data['publishWhen']['date']) ||
-            empty($data['publishWhen']['time'])
-        ) {
-            $form->get('publishWhen')->get('date')
-                 ->addError(new FormError('Publish date and time are required for scheduling.'));
-        }*/
+        if (empty($schedule->getWhen())) {
+            $event->getForm()->get('when')
+                 ->addError(new FormError('Date and time are required for scheduling.'));
+
+            return;
+        }
 
         if ($schedule->getAction()) {
             $schedule->setAction(get_class($content).':'.$content->getId().':'.Schedule::ACTION_PUBLISH);
             $this->scheduler->em->persist($schedule);
+        } else {
+            $this->scheduler->em->remove($schedule);
         }
     }
 }
