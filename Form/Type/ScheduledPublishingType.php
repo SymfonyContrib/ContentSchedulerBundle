@@ -99,7 +99,7 @@ class ScheduledPublishingType extends AbstractType
         $schedule = $event->getData();
         $content  = $event->getForm()->getParent()->getData();
 
-        if (empty($schedule->getWhen())) {
+        if ($schedule->getAction() && empty($schedule->getWhen())) {
             $event->getForm()->get('when')
                  ->addError(new FormError('Date and time are required for scheduling.'));
 
